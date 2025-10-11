@@ -15,6 +15,13 @@ export let parseHTML: typeof parse;
   } catch {}
 })();
 
+const htmlParseStringNotFoundError = () => {
+  console.error(
+    'In order to use JSX nesting, install %chtml-parse-string',
+    'font-weight: 700',
+    'https://github.com/ryansolid/html-parse-string.'
+  );
+};
 export const translateJSX = (
   { i18n: { options }, t, props }: { t: TFunction; props: ParentProps<TransProps>; i18n: i18n },
   children: Node[]
@@ -25,15 +32,14 @@ export const translateJSX = (
 
   if (translation === props.key) return children.map(translateWithInterpolation(t, options, props));
 
+  if (!parseHTML) {
+    htmlParseStringNotFoundError();
+    return;
+  }
   try {
     const [ast] = parseHTML(`<0>${translation}</0>`);
     return children.map(replaceElements(ast, options));
   } catch (e) {
-    console.log(e);
-    console.error(
-      'In order to use JSX nesting, install %chtml-parse-string',
-      'font-weight: 700',
-      'https://github.com/ryansolid/html-parse-string.'
-    );
+    console.error(e);
   }
 };
