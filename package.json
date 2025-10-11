@@ -8,10 +8,8 @@
     ".": {
       "types": "./dist/types/index.d.ts",
       "browser": {
-        "default": "./dist/browser.mjs"
+        "default": "./dist/index.mjs"
       },
-      "import": "./dist/ssr.mjs",
-      "require": "./dist/ssr.js"
     }
   },
   "files": [
@@ -42,10 +40,12 @@
   },
   "repository": "github:nerimity/i18lite",
   "scripts": {
-    "build": "vite build --config vite.config.js"
+    "build": "vite build --config vite.config.js",   
+    "build:types": "tsc --project tsconfig.types.json"
+
   },
   "sideEffects": false,
   "type": "module",
   "types": "./dist/types/index.d.ts",
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
