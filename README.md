@@ -14,11 +14,8 @@ with `<TransProvider />` and `<Trans />` components.
    1. [Add Resources](#add-resources)
    1. [Change a Language](#change-a-language)
    1. [T Function](#t-function)
-   1. [i18next Plugins and Utils](#i18next-plugins-and-utils)
-   1. [i18next Instance](#i18next-instance)
 1. [Interpolation](#interpolation)
    1. [Nested JSX](#nested-jsx)
-   1. [Pluralization](#pluralization)
 1. [API](#api)
    1. [Components](#components)
    1. [Utilities](#utilities)
@@ -140,73 +137,6 @@ const Component = () => {
 };
 ```
 
-### i18next Plugins and Utils
-
-**i18next** has [many plugins and utils](https://www.i18next.com/overview/plugins-and-utils).
-They can be loaded with `i18next.use` method. You need to have an `i18next` instance for that.
-
-There is possible to use default `i18next` instance or create a separate one.
-
-`<TransProvider />` initializes **i18next** (`i18next.init()`) under the hood, so you need to create an instance before initialization of the component.
-
-Plugins options and other **i18next** options must be provided with `options` property.
-
-```tsx
-import { TransProvider, Trans } from '@mbarzda/solid-i18next';
-import i18next from 'i18next';
-import HttpBackend from 'i18next-http-backend';
-
-// Use plugin with default instance.
-render(() => {
-  i18next.use(HttpBackend);
-
-  const backend = { loadPath: '/locales/{{lng}}/{{ns}}.json' };
-
-  return (
-    <TransProvider options={{ backend }}>
-      <App>
-        <Trans key="greeting">Hello!</Trans>
-      </App>
-    </TransProvider>
-  );
-});
-
-// Use plugin with separate instance.
-// New instance must be provided to `TransProvider` with `instance` property.
-render(() => {
-  const instance = i18next.createInstance();
-  instance.use(HttpBackend);
-
-  const backend = { loadPath: '/locales/{{lng}}/{{ns}}.json' };
-
-  return (
-    <TransProvider instance={instance} options={{ backend }}>
-      <App>
-        <Trans key="greeting">Hello!</Trans>
-      </App>
-    </TransProvider>
-  );
-});
-```
-
-### i18next Instance
-
-If there is need something more than this library provides, you can get **i18next** instance from `TransContext` and to do something with it.
-If you are using default instance, you also can use `i18next` global.
-
-```tsx
-const Component = () => {
-    const [, { getI18next }] = useTransContext();
-    getI18next().on('loaded', () => {...});
-
-    {/* or, if you are using default instance */}
-
-    i18next.on('loaded', () => {...});
-
-    return <></>;
-};
-```
-
 ## Interpolation
 
 Default interpolation uses `{{` and `}}` as prefix and suffix. Solid uses `{` and `}` for properties propagation. In that case
@@ -256,38 +186,6 @@ const resources = {
 ```
 
 Keep in mind that elements, with interpolation, must be a string, e.g: `'Hello {{name}}!'`.
-
-### Pluralization
-
-**i18next** provides default [pluralization feature](https://www.i18next.com/translation-function/plurals). Note, that pluralization keys [were changed](https://www.i18next.com/misc/migration-guide#json-format-v4-pluralization) since `i18next@21`.
-
-Translation keys may be inconsistent through different languages and you would prefer something like [ICU format](https://unicode-org.github.io/icu/userguide/format_parse/messages/).
-
-For that case I recommend [i18next-icu](https://github.com/i18next/i18next-icu) plugin. Note, that default interpolation would change.
-
-```sh
-npm i i18next-icu
-```
-
-```tsx
-import i18next from 'i18next';
-import ICU from 'i18next-icu';
-
-const instance = i18next.createInstance();
-instance.use(ICU);
-
-const resources = {
-    lt: {
-        photos: 'Tu { numPhotos, plural, 0 {neturi nuotraukų} other {turi { numPhotos, plural, one {# nuotrauką} few {# nuotraukas} other {# nuotraukų} }} }.'
-    }
-}
-
-<TransProvider instance={instance} options={{ resources }}>
-    <Trans key="photos" options={{ numPhotos: 10 }}>
-        {'You have {numPhotos, plural, =0 {no photos} =1 {one photo} other {# photos}}.'}
-    </Trans>
-</TransProvider>;
-```
 
 ## API
 

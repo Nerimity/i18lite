@@ -1,7 +1,7 @@
 import { Example, LanguageSwitcher } from '#/components';
 import { Trans, TransProvider } from '@mbarzda/solid-i18next';
-import i18next, { type InitOptions } from 'i18next';
 import type { VoidComponent } from 'solid-js';
+import i18next, { type InitOptions } from '../../../src/i18Lite';
 
 const NestedPage: VoidComponent = () => {
   const options: InitOptions = {

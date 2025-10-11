@@ -11,7 +11,6 @@ export const Main: VoidComponent = () => {
   const links = [
     { path: 'Simple', title: 'Simple' },
     { path: 'Nested', title: 'Nested' },
-    { path: 'HttpBackend', title: 'HttpBackend' },
   ];
   document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'Escape') setOpened(false);
@@ -23,9 +22,7 @@ export const Main: VoidComponent = () => {
       case 'Simple':
         page = lazy(() => import('#/pages/Simple'));
         break;
-      case 'HttpBackend':
-        page = lazy(() => import('#/pages/HttpBackend'));
-        break;
+
       case 'Nested':
         page = lazy(() => import('#/pages/Nested'));
         break;
