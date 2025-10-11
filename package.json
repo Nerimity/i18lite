@@ -9,7 +9,7 @@
       "types": "./dist/types/index.d.ts",
       "browser": {
         "default": "./dist/index.mjs"
-      },
+      }
     }
   },
   "files": [
