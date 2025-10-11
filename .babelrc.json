@@ -1,4 +1,0 @@
-{
-  "presets": ["@babel/preset-typescript", "solid", ["@babel/preset-env", { "targets": { "node": "20" } }]],
-  "plugins": [["@babel/plugin-transform-runtime", { "useESModules": true }]]
-}

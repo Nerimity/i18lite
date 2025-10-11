@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite';
-
 /** @type import('vite').UserConfig */
-export default defineConfig({
+const config = {
   build: {
     emptyOutDir: false,
-    lib: { entry: './src/index.ts' },
-    rollupOptions: {
-      external: ['solid-js', 'solid-js/web', 'html-parse-string'],
+    lib: {
+      entry: './src/index.ts',
+      fileName: () => 'index.mjs',
+      formats: ['es'],
     },
   },
-});
+};
+export default config;

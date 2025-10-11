@@ -10,7 +10,7 @@
     "outDir": "./dist",
     "paths": {
       "#/*": ["./docs/src/*"],
-      "@nerimity/solid-i18lite": ["./src/index.ts"]
+      "@nerimity/i18lite": ["./src/index.ts"]
     },
     "resolveJsonModule": true,
     "target": "esnext",
