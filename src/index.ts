@@ -21,6 +21,7 @@ export interface InterpolationOptions {
 export interface InitOptions {
   resources: Resource;
   lng?: string;
+  fallbackLng?: string;
   interpolation?: InterpolationOptions;
   keySeparator?: false | string;
   nsSeparator?: false | string;
@@ -57,6 +58,7 @@ export interface i18n {
 let events: Record<string, (...args: any[]) => void> = {};
 let ns = 'translation';
 export let language = '';
+export let fallbackLng = '';
 const DefaultOptions: InitOptions = { resources: {}, interpolation: { prefix: '{{', suffix: '}}' } };
 export let options = DefaultOptions;
 
@@ -89,7 +91,9 @@ const interpolate = (str: string, data: object): string => {
 
 export const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
   let rawResource =
-    getResource(instance.language, ns, key) ?? (typeof optionsOrDefault === 'string' ? optionsOrDefault : key);
+    getResource(instance.language, ns, key) ??
+    getResource(instance.language, ns, fallbackLng) ??
+    (typeof optionsOrDefault === 'string' ? optionsOrDefault : key);
 
   if (arg3 || (typeof optionsOrDefault === 'object' && optionsOrDefault !== null)) {
     return interpolate(rawResource, (arg3 || optionsOrDefault) as object);
@@ -108,6 +112,7 @@ export const init: i18n['init'] = (newOptions, callback) => {
     options.interpolation.prefix = newOptions.interpolation?.prefix || '{{';
     options.interpolation.suffix = newOptions.interpolation?.suffix || '}}';
   }
+  fallbackLng = newOptions?.fallbackLng || '';
   language = newOptions?.lng || '';
   instance.store = { data: options.resources || {} };
   options.resources = {};
