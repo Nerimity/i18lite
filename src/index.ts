@@ -91,9 +91,11 @@ const interpolate = (str: string, data: object): string => {
 
 export const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
   let rawResource =
-    getResource(instance.language, ns, key) ??
-    getResource(instance.language, ns, fallbackLng) ??
-    (typeof optionsOrDefault === 'string' ? optionsOrDefault : key);
+    getResource(instance.language, ns, key) ?? // 1. Try current language + key
+    (fallbackLng
+      ? getResource(fallbackLng, ns, key) // 2. If present, try fallback language + key
+      : undefined) ??
+    (typeof optionsOrDefault === 'string' ? optionsOrDefault : key); // 3. Fallback to default/key
 
   if (arg3 || (typeof optionsOrDefault === 'object' && optionsOrDefault !== null)) {
     return interpolate(rawResource, (arg3 || optionsOrDefault) as object);
