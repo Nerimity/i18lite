@@ -2,10 +2,11 @@
 const config = {
   build: {
     emptyOutDir: false,
+    sourcemap: true,
     lib: {
       entry: './src/index.ts',
-      fileName: () => 'index.mjs',
-      formats: ['es'],
+      fileName: (format) => 'index.' + (format === 'es' ? 'mjs' : 'js'),
+      formats: ['es', 'cjs'],
     },
   },
 };
