@@ -216,3 +216,5 @@ const instance: i18n = {
   options,
   getResource,
 };
+
+export default instance;
