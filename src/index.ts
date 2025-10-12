@@ -217,4 +217,16 @@ const instance: i18n = {
   getResource,
 };
 
-export default instance;
+export default {
+  get language() {
+    return language;
+  },
+  createInstance,
+  t,
+  on,
+  init,
+  changeLanguage,
+  addResourceBundle,
+  options,
+  getResource,
+};
