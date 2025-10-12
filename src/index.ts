@@ -56,9 +56,9 @@ export interface i18n {
 
 let events: Record<string, (...args: any[]) => void> = {};
 let ns = 'translation';
-let language = '';
+export let language = '';
 const DefaultOptions: InitOptions = { resources: {}, interpolation: { prefix: '{{', suffix: '}}' } };
-let options = DefaultOptions;
+export let options = DefaultOptions;
 
 const escapeRegex = (str: string): string => {
   return str.replace(/[-|\\{}()[\]^$+*?.]/g, (c) => (c === '-' ? '\\x2d' : `\\${c}`));
@@ -87,7 +87,7 @@ const interpolate = (str: string, data: object): string => {
   });
 };
 
-const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
+export const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
   let rawResource =
     getResource(instance.language, ns, key) ?? (typeof optionsOrDefault === 'string' ? optionsOrDefault : key);
 
@@ -97,11 +97,11 @@ const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) =>
   return rawResource;
 };
 
-const on = (event: string, callback: (...args: any[]) => void) => {
+export const on = (event: string, callback: (...args: any[]) => void) => {
   events[event] = callback;
 };
 
-const init: i18n['init'] = (newOptions, callback) => {
+export const init: i18n['init'] = (newOptions, callback) => {
   options = DefaultOptions;
   if (newOptions) {
     options = { ...newOptions, interpolation: newOptions?.interpolation || {} };
@@ -114,7 +114,7 @@ const init: i18n['init'] = (newOptions, callback) => {
   callback?.(null, t);
 };
 
-const changeLanguage = (lang: string) => {
+export const changeLanguage = (lang: string) => {
   language = lang;
   return Promise.resolve(t);
 };
@@ -138,7 +138,7 @@ const deepMerge = <T extends $Dictionary>(target: T, source: $Dictionary, overwr
   return target;
 };
 
-const addResourceBundle: i18n['addResourceBundle'] = (lng, nsName, resources, deep = true, overwrite = true) => {
+export const addResourceBundle: i18n['addResourceBundle'] = (lng, nsName, resources, deep = true, overwrite = true) => {
   instance.store = instance.store || { data: {} };
   instance.store.data = instance.store.data || {};
   instance.store.data[lng] = instance.store.data[lng] || {};
@@ -160,7 +160,7 @@ const addResourceBundle: i18n['addResourceBundle'] = (lng, nsName, resources, de
 
 type Dict = Record<string, any>;
 
-const getResource = (
+export const getResource = (
   lng: string,
   nsName: string,
   key: string,
@@ -199,25 +199,11 @@ const getResource = (
   return obj;
 };
 
-const createInstance = (): i18n => {
+export const createInstance = (): i18n => {
   return instance;
 };
 
 const instance: i18n = {
-  get language() {
-    return language;
-  },
-  createInstance,
-  t,
-  on,
-  init,
-  changeLanguage,
-  addResourceBundle,
-  options,
-  getResource,
-};
-
-export default {
   get language() {
     return language;
   },
