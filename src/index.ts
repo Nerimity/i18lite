@@ -66,9 +66,25 @@ const escapeRegex = (str: string): string => {
   return str.replace(/[-|\\{}()[\]^$+*?.]/g, (c) => (c === '-' ? '\\x2d' : `\\${c}`));
 };
 
+/**
+ * Escapes HTML entities in a string.
+ * @param str The string to escape.
+ * @returns The escaped string.
+ */
+const escape = (str: any): string => {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\//g, '&#x2F;');
+};
+
 const regexCache = new Map<string, RegExp>();
 
-const interpolate = (str: string, data: object): string => {
+const interpolate = (str: string, data: object, escapeValue: boolean = true): string => {
   if (!str) return '';
 
   const interp = options?.interpolation;
@@ -85,7 +101,12 @@ const interpolate = (str: string, data: object): string => {
   }
 
   return str.replace(regex, (match, key) => {
-    return Object.prototype.hasOwnProperty.call(data, key) ? (data as any)[key] : match;
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      let value = (data as any)[key];
+      // Escape the value if escapeValue is true
+      return escapeValue ? escape(value) : value;
+    }
+    return match;
   });
 };
 
@@ -98,7 +119,8 @@ export const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?:
     (typeof optionsOrDefault === 'string' ? optionsOrDefault : key); // 3. Fallback to default/key
 
   if (arg3 || (typeof optionsOrDefault === 'object' && optionsOrDefault !== null)) {
-    return interpolate(rawResource, (arg3 || optionsOrDefault) as object);
+    const values = (arg3 || optionsOrDefault) as { interpolation?: { escapeValue?: boolean } };
+    return interpolate(rawResource, values, values?.interpolation?.escapeValue ?? true);
   }
   return rawResource;
 };
