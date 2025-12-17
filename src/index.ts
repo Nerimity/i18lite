@@ -31,14 +31,17 @@ export interface InitOptions {
 
 export interface TOptionsBase {
   lng?: string;
+  interpolation?: {
+    escapeValue?: boolean;
+  };
 }
 
 export type TOptions<TInterpolationMap extends object = $Dictionary> = TOptionsBase & TInterpolationMap;
 
 export type TFunction = {
-  (key: string, options?: {}): string;
-  (key: string, defaultValue: string, options?: {}): string;
-  (key: string, arg2?: string | {}, arg3?: {}): string;
+  (key: string, options?: TOptions): string;
+  (key: string, defaultValue: string, options?: TOptions): string;
+  (key: string, arg2?: string | TOptions, arg3?: TOptions): string;
 };
 
 export interface i18n {
@@ -110,17 +113,21 @@ const interpolate = (str: string, data: object, escapeValue: boolean = true): st
   });
 };
 
-export const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
+export const t: TFunction = (key: string, optionsOrDefault?: string | TOptions, arg3?: TOptions) => {
+  const isDefaultString = typeof optionsOrDefault === 'string';
+  const options = (isDefaultString ? arg3 : optionsOrDefault) as TOptions;
+
+  const targetLng = options?.lng ?? instance.language;
+
   let rawResource =
-    getResource(instance.language, ns, key) ?? // 1. Try current language + key
+    getResource(targetLng, ns, key) ?? // 1. Try current language + key
     (fallbackLng
       ? getResource(fallbackLng, ns, key) // 2. If present, try fallback language + key
       : undefined) ??
     (typeof optionsOrDefault === 'string' ? optionsOrDefault : key); // 3. Fallback to default/key
 
-  if (arg3 || (typeof optionsOrDefault === 'object' && optionsOrDefault !== null)) {
-    const values = (arg3 || optionsOrDefault) as { interpolation?: { escapeValue?: boolean } };
-    return interpolate(rawResource, values, values?.interpolation?.escapeValue ?? true);
+  if (options && typeof options === 'object') {
+    return interpolate(rawResource, options, options?.interpolation?.escapeValue ?? true);
   }
   return rawResource;
 };
